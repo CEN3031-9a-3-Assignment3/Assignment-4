@@ -27,7 +27,6 @@ module.exports.init = function() {
   });
 
   /* serve static files */
-<<<<<<< HEAD
   app.use(express.static('client'));
 
   /* use the listings router for requests to the api */
@@ -38,7 +37,6 @@ module.exports.init = function() {
   
   /* go to homepage for all routes not specified */ 
   app.use(function(req, res) {
-=======
   app.use(express.static('public'));
 
   /* use the listings router for requests to the api */
@@ -46,7 +44,6 @@ module.exports.init = function() {
 
   /* go to homepage for all routes not specified */ 
   router.use(function(req, res) {
->>>>>>> a970a7d044b9b3380e1b4628441ed291676cc344
     res.sendFile(path.join(__dirname + '/client/index.html'));
   });
 
