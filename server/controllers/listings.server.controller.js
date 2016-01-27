@@ -46,23 +46,55 @@ exports.read = function(req, res) {
 /* Update a listing */
 exports.update = function(req, res) {
   var listing = req.listing;
-
-  /* Replace the article's properties with the new properties found in req.body */
-  /* save the coordinates (located in req.results if there is an address property) */
-  /* Save the article */
+  Listing.findById(listing.id, function(err, oldListing) {
+	 if(err) {
+		 res.status(400).send(err);
+	 }
+	 else {
+		listing.code = req.body.code;
+		listing.name = req.body.name;
+		if (req.body.address) listing.address = req.body.address;
+		if (req.results) {
+			listing.coordinates = {
+				latitude : req.results.lat,
+				longitude: req.results.lng
+			};
+		}
+		listing.save(function(err) {
+			if(err) {
+				res.status(400).send(err);
+			}
+			else { 
+				res.json(listing);
+			}
+		});
+	 }
+  }); 
 };
 
 /* Delete a listing */
 exports.delete = function(req, res) {
   var listing = req.listing;
-
+  listing.remove(function(err, listing) {
+	 if(err) {res.status(400).send(err);}
+	 else {res.json(listing);}
+  });
   /* Remove the article */
 };
 
 /* Retreive all the directory listings, sorted alphabetically by listing code */
 exports.list = function(req, res) {
-  /* Your code here */
+  Listing.find(function(err,listings) {
+	 if(err) res.status(400).send(err);
+	 res.json(listings.sort(function(a,b) {
+		var codeA = a.code.toLowerCase(), codeB = b.code.toLowerCase();
+		if(codeA < codeB) return -1;
+		if(codeA > codeB) return 1;
+		return 0;
+	}));
+  });
 };
+
 
 /* 
   Middleware: find a listing by its ID, then pass it to the next request handler. 
